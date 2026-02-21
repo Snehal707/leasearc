@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { TopNav } from "../components/TopNav";
 import { LeaseDaysSlider } from "../components/ui/LeaseDaysSlider";
 import { DOMAIN_LEASE_ABI, USDC_ABI, USDC_ADDRESS } from "@/lib/contracts/DomainLease";
@@ -89,7 +89,7 @@ function RentContent() {
     ? new Date(Date.now() + days * 86400 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : null;
 
-  const { data: allowance } = useReadContract({
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: USDC_ADDRESS,
     abi: USDC_ABI,
     functionName: "allowance",
@@ -97,8 +97,15 @@ function RentContent() {
   });
   const needsApproval = allowance !== undefined && allowance < totalPrice && totalPrice > BigInt(0);
 
-  const { writeContract: writeApprove, isPending: isApprovePending } = useWriteContract();
+  const { writeContract: writeApprove, isPending: isApprovePending, data: approveHash } = useWriteContract();
   const { writeContract: writeRent, isPending: isRentPending, data: rentHash } = useWriteContract();
+
+  const { isSuccess: isApproveConfirmed } = useWaitForTransactionReceipt({ hash: approveHash });
+  useEffect(() => {
+    if (isApproveConfirmed && approveHash) {
+      refetchAllowance();
+    }
+  }, [isApproveConfirmed, approveHash, refetchAllowance]);
 
   const handleApprove = useCallback(() => {
     writeApprove({
