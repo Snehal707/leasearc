@@ -21,9 +21,57 @@ export function WalletButton() {
     );
   }
 
+  const toolsDropdown = (
+    <div className="relative">
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent [&::-webkit-details-marker]:hidden">
+          Tools
+          <svg className="size-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <div className="absolute right-0 top-full z-50 mt-2 min-w-[200px] rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl">
+          <a href={ARC_DOCS.connectToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Add Arc Testnet
+          </a>
+          <a href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Faucet
+          </a>
+          <a href={ARC_DOCS.bridgeUsdcToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Bridge USDC
+          </a>
+          <a href={ARC_DOCS.gasTracker} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Gas Tracker
+          </a>
+          <div className="my-2 border-t border-white/10" />
+          <p className="px-4 py-1.5 text-[10px] uppercase tracking-wider text-slate-500">Docs & resources</p>
+          <a href={ARC_DOCS.connectToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Connect to Arc
+          </a>
+          <a href={ARC_DOCS.deployOnArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Deploy on Arc
+          </a>
+          <a href={ARC_DOCS.stableFeeDesign} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Stable fee design
+          </a>
+          <a href={ARC_DOCS.gasAndFees} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Gas and fees
+          </a>
+          <a href={ARC_DOCS.monitorEvents} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Monitor events
+          </a>
+          <a href={ARC_DOCS.bridgeUsdcToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+            Bridge USDC
+          </a>
+        </div>
+      </details>
+    </div>
+  );
+
   if (isConnected && address) {
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {toolsDropdown}
         {!isArc && (
           <button
             type="button"
@@ -52,30 +100,7 @@ export function WalletButton() {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="relative">
-        <details className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent [&::-webkit-details-marker]:hidden">
-            Tools
-            <svg className="size-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </summary>
-          <div className="absolute right-0 top-full z-50 mt-2 min-w-[180px] rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl">
-            <a href={ARC_DOCS.connectToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
-              Add Arc Testnet
-            </a>
-            <a href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
-              Faucet
-            </a>
-            <a href={ARC_DOCS.bridgeUsdcToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
-              Bridge USDC
-            </a>
-            <a href={ARC_DOCS.gasTracker} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
-              Gas Tracker
-            </a>
-          </div>
-        </details>
-      </div>
+      {toolsDropdown}
       <button
         type="button"
         onClick={() => connect({ connector: connectors[0] })}

@@ -28,6 +28,11 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.03);
 }
 
+/* Hero text glow for readability over planet */
+.hero-text-glow {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.15), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 /* Premium section labels */
 .label-premium {
   @apply uppercase tracking-[0.15em] text-[11px] font-medium text-slate-400;

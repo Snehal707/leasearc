@@ -41,7 +41,7 @@ export default function RootLayout({
           />
           <LazyStarfield />
           <div className="css-3d-earth absolute top-1/2 -translate-y-1/2 -right-[400px] h-[1000px] w-[1000px] pointer-events-none z-0" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#02040A] via-[#02040A]/80 to-transparent pointer-events-none z-0" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#02040A] via-[#02040A]/40 to-transparent pointer-events-none z-0" />
         </div>
         <Providers>{children}</Providers>
       </body>
