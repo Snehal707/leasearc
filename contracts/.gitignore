@@ -1,0 +1,13 @@
+# Secrets – never commit
+.env
+
+# Foundry
+.foundry/
+cache/
+out/
+broadcast/
+lib/
+
+# IDE
+.idea/
+*.swp

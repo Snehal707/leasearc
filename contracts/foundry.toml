@@ -1,0 +1,13 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+remappings = ["forge-std/=lib/forge-std/src"]
+solc = "0.8.24"
+evm_version = "paris"
+
+[rpc_endpoints]
+arc_testnet = "${ARC_TESTNET_RPC_URL}"
+
+[etherscan]
+arc_testnet = { key = "${ARCSCAN_API_KEY}", url = "https://api-testnet.arcscan.app/api" }

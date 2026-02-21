@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/* Stitch: LeaseArc Search Redesign – DARK, Space Grotesk, #258cf4 */
+:root {
+  --background: #02040A;
+  --foreground: #fafafa;
+  --card: #0f0f1a;
+  --card-border: #1e293b;
+  --accent: #258cf4;
+  --accent-rgb: 37, 140, 244;
+  --glow: rgba(37, 140, 244, 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Premium text depth on dark backgrounds */
+.text-premium {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.03);
+}
+
+/* Premium section labels */
+.label-premium {
+  @apply uppercase tracking-[0.15em] text-[11px] font-medium text-slate-400;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* True Orbit: background layer */
+.space-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Button pulse glow */
+@keyframes subtle-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(74, 144, 226, 0.6); }
+  50% { box-shadow: 0 0 25px rgba(74, 144, 226, 0.9); }
+}
+.btn-glow-pulse {
+  animation: subtle-pulse 3s infinite ease-in-out;
+}
+
+/* Spinning 3D Earth sphere */
+@keyframes spin-sphere {
+  from { background-position: 0px center; }
+  to { background-position: -2048px center; }
+}
+.css-3d-earth {
+  border-radius: 50%;
+  background-image: url("https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg");
+  background-size: 2048px 100%;
+  background-repeat: repeat-x;
+  animation: spin-sphere 80s linear infinite;
+  box-shadow:
+    inset 200px 0 200px 10px rgba(0, 0, 0, 0.95),
+    inset -40px 0 80px rgba(255, 255, 255, 0.5),
+    -20px 0 60px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.2) contrast(1.1);
+}
+
+/* Stitch accent #258cf4 – input/card glows */
+.input-glow {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 0 14px rgba(var(--accent-rgb), 0.1);
+}
+.input-glow:focus-within,
+.input-glow:focus {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.6), 0 0 18px rgba(var(--accent-rgb), 0.18);
+}
+
+.btn-glow {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 0 14px rgba(var(--accent-rgb), 0.12);
+}
+.btn-glow:hover {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.5), 0 0 20px rgba(var(--accent-rgb), 0.2);
+}
+
+.card-glow {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.3), 0 0 24px rgba(var(--accent-rgb), 0.08);
+}
+
+/* Stitch: glass panel and button */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-button {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
