@@ -169,7 +169,9 @@ export default function ManagePage() {
     });
   }, [writeSetRecords, contractAddress, tokenId, primary, website, socials]);
 
-  const expiringSoon = expiry !== undefined && expiry > BigInt(0) && Number(expiry) - Math.floor(Date.now() / 1000) < EXPIRING_SOON_DAYS * 86400;
+  const now = Math.floor(Date.now() / 1000);
+  const timeLeft = expiry !== undefined ? Number(expiry) - now : 0;
+  const expiringSoon = expiry !== undefined && expiry > BigInt(0) && timeLeft > 0 && timeLeft < EXPIRING_SOON_DAYS * 86400;
 
   return (
     <div className="min-h-screen">
