@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { usePublicClient, useWatchContractEvent } from "wagmi";
-import { DOMAIN_LEASE_ABI } from "@/lib/contracts/DomainLease";
+import { DOMAIN_LEASE_ABI, ARC_TESTNET_CHAIN_ID } from "@/lib/contracts/DomainLease";
 import { getDomainLeaseAddress } from "@/lib/contract-address";
 
 type EventEntry = {
@@ -17,98 +17,87 @@ export function LiveEvents() {
   const [events, setEvents] = useState<EventEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const address = getDomainLeaseAddress();
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId: ARC_TESTNET_CHAIN_ID });
 
   const push = useCallback((entry: EventEntry) => {
     setEvents((prev) => [entry, ...prev].slice(0, 20));
   }, []);
 
-  // Fetch recent historical events on mount
+  // Fetch recent historical events on mount (chunked to avoid RPC limits)
   useEffect(() => {
     if (!address || address === "0x0000000000000000000000000000000000000000" || !publicClient) {
       setLoading(false);
       return;
     }
     let cancelled = false;
+    const CHUNK = 2000n;
+    const MAX_BLOCKS = 50_000n;
     const run = async () => {
       try {
-        const blockNumber = await publicClient.getBlockNumber();
-        const fromBlock = blockNumber > 50_000n ? blockNumber - 50_000n : 0n;
-        const [rented, renewed, reclaimed, records] = await Promise.all([
-          publicClient.getContractEvents({
-            address,
-            abi: DOMAIN_LEASE_ABI,
-            eventName: "NameRented",
-            fromBlock,
-            toBlock: blockNumber,
-          }),
-          publicClient.getContractEvents({
-            address,
-            abi: DOMAIN_LEASE_ABI,
-            eventName: "NameRenewed",
-            fromBlock,
-            toBlock: blockNumber,
-          }),
-          publicClient.getContractEvents({
-            address,
-            abi: DOMAIN_LEASE_ABI,
-            eventName: "NameReclaimed",
-            fromBlock,
-            toBlock: blockNumber,
-          }),
-          publicClient.getContractEvents({
-            address,
-            abi: DOMAIN_LEASE_ABI,
-            eventName: "RecordUpdated",
-            fromBlock,
-            toBlock: blockNumber,
-          }),
-        ]);
+        const toBlock = await publicClient.getBlockNumber();
+        const startBlock = toBlock > MAX_BLOCKS ? toBlock - MAX_BLOCKS : 0n;
+        const allLogs: EventEntry[] = [];
+        let chunkTo = toBlock;
+        while (chunkTo >= startBlock && !cancelled) {
+          const fromBlock = chunkTo - CHUNK + 1n >= startBlock ? chunkTo - CHUNK + 1n : startBlock;
+          try {
+            const [rented, renewed, reclaimed, records] = await Promise.all([
+              publicClient.getContractEvents({
+                address,
+                abi: DOMAIN_LEASE_ABI,
+                eventName: "NameRented",
+                fromBlock,
+                toBlock: chunkTo,
+              }),
+              publicClient.getContractEvents({
+                address,
+                abi: DOMAIN_LEASE_ABI,
+                eventName: "NameRenewed",
+                fromBlock,
+                toBlock: chunkTo,
+              }),
+              publicClient.getContractEvents({
+                address,
+                abi: DOMAIN_LEASE_ABI,
+                eventName: "NameReclaimed",
+                fromBlock,
+                toBlock: chunkTo,
+              }),
+              publicClient.getContractEvents({
+                address,
+                abi: DOMAIN_LEASE_ABI,
+                eventName: "RecordUpdated",
+                fromBlock,
+                toBlock: chunkTo,
+              }),
+            ]);
+            [
+              ...rented.map((log) => {
+                const args = log.args as { name: string; renter: string; daysRented: bigint };
+                return { type: "NameRented" as const, name: args.name, detail: `Rented by ${args.renter?.slice(0, 8)}… for ${args.daysRented} days`, txHash: log.transactionHash, blockNumber: log.blockNumber };
+              }),
+              ...renewed.map((log) => {
+                const args = log.args as { name: string; renter: string; daysAdded: bigint };
+                return { type: "NameRenewed" as const, name: args.name, detail: `Renewed by ${args.renter?.slice(0, 8)}… +${args.daysAdded} days`, txHash: log.transactionHash, blockNumber: log.blockNumber };
+              }),
+              ...reclaimed.map((log) => {
+                const args = log.args as { name: string; newRenter: string };
+                return { type: "NameReclaimed" as const, name: args.name, detail: `Reclaimed by ${args.newRenter?.slice(0, 8)}…`, txHash: log.transactionHash, blockNumber: log.blockNumber };
+              }),
+              ...records.map((log) => {
+                const args = log.args as { name: string; renter: string; primaryWallet: string };
+                return { type: "RecordUpdated" as const, name: args.name, detail: `Records updated, primary ${args.primaryWallet?.slice(0, 8)}…`, txHash: log.transactionHash, blockNumber: log.blockNumber };
+              }),
+            ].forEach((e) => allLogs.push(e));
+          } catch {
+            // skip failed chunk
+          }
+          chunkTo = fromBlock - 1n;
+          if (allLogs.length >= 20) break;
+        }
         if (cancelled) return;
-        const all: EventEntry[] = [
-          ...rented.map((log) => {
-            const args = log.args as { name: string; renter: string; daysRented: bigint };
-            return {
-              type: "NameRented",
-              name: args.name,
-              detail: `Rented by ${args.renter?.slice(0, 8)}… for ${args.daysRented} days`,
-              txHash: log.transactionHash,
-              blockNumber: log.blockNumber,
-            };
-          }),
-          ...renewed.map((log) => {
-            const args = log.args as { name: string; renter: string; daysAdded: bigint };
-            return {
-              type: "NameRenewed",
-              name: args.name,
-              detail: `Renewed by ${args.renter?.slice(0, 8)}… +${args.daysAdded} days`,
-              txHash: log.transactionHash,
-              blockNumber: log.blockNumber,
-            };
-          }),
-          ...reclaimed.map((log) => {
-            const args = log.args as { name: string; newRenter: string };
-            return {
-              type: "NameReclaimed",
-              name: args.name,
-              detail: `Reclaimed by ${args.newRenter?.slice(0, 8)}…`,
-              txHash: log.transactionHash,
-              blockNumber: log.blockNumber,
-            };
-          }),
-          ...records.map((log) => {
-            const args = log.args as { name: string; renter: string; primaryWallet: string };
-            return {
-              type: "RecordUpdated",
-              name: args.name,
-              detail: `Records updated, primary ${args.primaryWallet?.slice(0, 8)}…`,
-              txHash: log.transactionHash,
-              blockNumber: log.blockNumber,
-            };
-          }),
-        ];
-        all.sort((a, b) => Number((b.blockNumber ?? 0n) - (a.blockNumber ?? 0n)));
-        setEvents(all.slice(0, 20));
+        allLogs.sort((a, b) => Number((b.blockNumber ?? 0n) - (a.blockNumber ?? 0n)));
+        setEvents(allLogs.slice(0, 20));
       } catch {
         // ignore RPC errors
       } finally {
@@ -192,12 +181,12 @@ export function LiveEvents() {
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-sm p-6">
       <p className="label-premium">Live activity</p>
-      <p className="mt-0.5 text-xs text-slate-400">Recent rents, renewals, reclaims, and record updates from everyone.</p>
+      <p className="mt-0.5 text-xs text-slate-400">Contract events (updates when new events are emitted)</p>
       <ul className="mt-4 space-y-2 max-h-48 overflow-y-auto">
         {loading ? (
           <li className="text-sm text-slate-400">Loading recent events…</li>
         ) : events.length === 0 ? (
-          <li className="text-sm text-slate-300">No recent activity yet. Rents, renewals, and reclaims will appear here when they happen.</li>
+          <li className="text-sm text-slate-300">No recent events yet. Rent or renew a name to see activity here.</li>
         ) : (
           events.map((e, i) => (
             <li key={`${e.txHash}-${i}`} className="text-sm">
