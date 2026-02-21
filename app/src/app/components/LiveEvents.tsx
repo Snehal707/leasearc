@@ -224,68 +224,69 @@ export function LiveEvents() {
   const arcScanUrl = `https://testnet.arcscan.app/address/${address}#events`;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-gradient-to-b from-black/65 to-black/55 backdrop-blur-sm shadow-lg shadow-black/40 pt-7 pb-6 px-6">
-      <div className="flex flex-col gap-3">
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-black/65 to-black/55 backdrop-blur-sm shadow-lg shadow-black/40">
+      <div className="flex flex-col gap-3 pt-8 pb-6 px-6">
         {/* Row 1: Title on left, tabs on right */}
         <div className="flex items-center justify-between gap-4 min-w-0 leading-normal">
           <p className="label-premium shrink-0 max-w-[200px] leading-normal">Live activity</p>
-          <div className="flex flex-1 flex-nowrap overflow-x-auto gap-1 min-w-0 -mx-1 px-1 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-1 min-w-0 flex-nowrap overflow-x-auto gap-1 -mx-1 px-1 py-0.5 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {FILTER_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-white/10 text-white"
-                  : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
-              }`}
-            >
-              {tab.label}
-            </button>
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "bg-white/10 text-white"
+                    : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                }`}
+              >
+                {tab.label}
+              </button>
             ))}
           </div>
         </div>
         {/* Row 2: Description full width */}
         <p className="text-xs text-slate-400 leading-normal">Contract events (updates when new events are emitted)</p>
-      <ul className="mt-4 space-y-3 max-h-64 overflow-y-auto">
+      <ul className="mt-4 space-y-0 max-h-64 overflow-y-auto pr-1 -mr-1">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
-            <li key={i} className="flex items-center gap-4 animate-pulse">
+            <li key={i} className="grid grid-cols-[minmax(0,1fr)_auto_minmax(80px,1fr)_4rem_2.5rem] items-center gap-3 py-2.5 px-1 animate-pulse">
               <div className="h-4 w-24 rounded bg-slate-700/50" />
               <div className="h-4 w-14 rounded bg-slate-700/50" />
               <div className="h-4 w-16 rounded bg-slate-700/50" />
-              <div className="h-4 w-10 rounded bg-slate-700/50" />
+              <div className="h-4 w-8 rounded bg-slate-700/50 ml-auto" />
+              <div className="h-4 w-6 rounded bg-slate-700/50" />
             </li>
           ))
         ) : filtered.length === 0 ? (
-          <li className="text-sm text-slate-300">No recent events yet. Rent or renew a name to see activity here.</li>
+          <li className="text-sm text-slate-300 py-4 px-1">No recent events yet. Rent or renew a name to see activity here.</li>
         ) : (
           filtered.map((e, i) => (
             <li
               key={`${e.txHash}-${i}`}
-              className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm min-w-0"
+              className="grid grid-cols-[minmax(0,1fr)_auto_minmax(80px,1fr)_4rem_2.5rem] items-center gap-3 py-2.5 px-1 rounded-md hover:bg-white/[0.04] transition-colors min-h-[2.25rem]"
             >
-              <span className="font-medium text-slate-100 truncate basis-full sm:basis-auto">&quot;{e.name}&quot;</span>
-              <span className="rounded px-2 py-0.5 text-xs font-medium bg-white/10 text-slate-200 shrink-0">
+              <span className="font-medium text-slate-100 truncate min-w-0 max-w-full" title={e.name}>&quot;{e.name}&quot;</span>
+              <span className="rounded px-2 py-0.5 text-xs font-medium bg-white/10 text-slate-200 w-fit shrink-0">
                 {BADGE_LABELS[e.type]}
               </span>
-              <span className="font-mono text-slate-400 text-xs truncate shrink-0">
+              <span className="font-mono text-slate-400 text-xs truncate min-w-0" title={e.renter}>
                 {e.renter ? `${e.renter.slice(0, 6)}…${e.renter.slice(-4)}` : "—"}
               </span>
-              <span className="text-slate-400 text-xs shrink-0">{e.duration ?? "—"}</span>
-              {e.txHash ? (
-                <a
-                  href={`https://testnet.arcscan.app/tx/${e.txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 underline text-xs shrink-0 hover:text-blue-300"
-                >
-                  tx
-                </a>
-              ) : (
-                <span className="shrink-0" />
-              )}
+              <span className="text-slate-400 text-xs text-right w-16 shrink-0">{e.duration ?? "—"}</span>
+              <span className="w-10 shrink-0 text-right">
+                {e.txHash ? (
+                  <a
+                    href={`https://testnet.arcscan.app/tx/${e.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 underline text-xs hover:text-blue-300"
+                  >
+                    tx
+                  </a>
+                ) : null}
+              </span>
             </li>
           ))
         )}
