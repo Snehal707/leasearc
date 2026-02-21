@@ -72,7 +72,9 @@ export default function SearchPage() {
       ? `/rent?name=${encodeURIComponent(query)}&days=${days}`
       : available === false && address && renter && String(renter).toLowerCase() === address.toLowerCase()
         ? "/manage"
-        : undefined;
+        : available === false
+          ? `/rent?name=${encodeURIComponent(query)}&days=${days}`
+          : undefined;
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden text-white">
