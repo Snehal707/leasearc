@@ -192,12 +192,12 @@ export function LiveEvents() {
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-sm p-6">
       <p className="label-premium">Live activity</p>
-      <p className="mt-0.5 text-xs text-slate-400">Contract events (updates when new events are emitted)</p>
+      <p className="mt-0.5 text-xs text-slate-400">Recent rents, renewals, reclaims, and record updates from everyone.</p>
       <ul className="mt-4 space-y-2 max-h-48 overflow-y-auto">
         {loading ? (
           <li className="text-sm text-slate-400">Loading recent events…</li>
         ) : events.length === 0 ? (
-          <li className="text-sm text-slate-300">No recent events yet. Rent or renew a name to see activity here.</li>
+          <li className="text-sm text-slate-300">No recent activity yet. Rents, renewals, and reclaims will appear here when they happen.</li>
         ) : (
           events.map((e, i) => (
             <li key={`${e.txHash}-${i}`} className="text-sm">
