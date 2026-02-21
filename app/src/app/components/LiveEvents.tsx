@@ -300,6 +300,7 @@ export function LiveEvents() {
           View all events
         </a>
       )}
+      </div>
     </div>
   );
 }
