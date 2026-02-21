@@ -224,7 +224,7 @@ export function LiveEvents() {
   const arcScanUrl = `https://testnet.arcscan.app/address/${address}#events`;
 
   return (
-    <div className="rounded-xl border border-white/20 bg-gradient-to-b from-white/[0.55] to-white/[0.45] backdrop-blur-sm shadow-lg shadow-black/30 pt-7 pb-6 px-6">
+    <div className="rounded-xl border border-white/10 bg-gradient-to-b from-black/65 to-black/55 backdrop-blur-sm shadow-lg shadow-black/40 pt-7 pb-6 px-6">
       <div className="flex flex-col gap-3">
         {/* Row 1: Title on left, tabs on right */}
         <div className="flex items-center justify-between gap-4 min-w-0 leading-normal">
