@@ -224,11 +224,11 @@ export function LiveEvents() {
   const arcScanUrl = `https://testnet.arcscan.app/address/${address}#events`;
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-sm p-6">
+    <div className="rounded-xl border border-white/20 bg-gradient-to-b from-white/[0.55] to-white/[0.45] backdrop-blur-sm shadow-lg shadow-black/30 pt-7 pb-6 px-6">
       <div className="flex flex-col gap-3">
         {/* Row 1: Title on left, tabs on right */}
-        <div className="flex items-center justify-between gap-4 min-w-0">
-          <p className="label-premium shrink-0 max-w-[200px]">Live activity</p>
+        <div className="flex items-center justify-between gap-4 min-w-0 leading-normal">
+          <p className="label-premium shrink-0 max-w-[200px] leading-normal">Live activity</p>
           <div className="flex flex-1 flex-nowrap overflow-x-auto gap-1 min-w-0 -mx-1 px-1 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {FILTER_TABS.map((tab) => (
             <button
