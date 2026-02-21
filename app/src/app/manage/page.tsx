@@ -172,6 +172,7 @@ export default function ManagePage() {
   const now = Math.floor(Date.now() / 1000);
   const timeLeft = expiry !== undefined ? Number(expiry) - now : 0;
   const expiringSoon = expiry !== undefined && expiry > BigInt(0) && timeLeft > 0 && timeLeft < EXPIRING_SOON_DAYS * 86400;
+  const isExpired = expiry !== undefined && expiry > BigInt(0) && timeLeft <= 0;
 
   return (
     <div className="min-h-screen">
@@ -188,6 +189,11 @@ export default function ManagePage() {
             {expiringSoon && (
               <div className="mt-4">
                 <Alert variant="warning">This name is expiring soon. Renew to keep it.</Alert>
+              </div>
+            )}
+            {isExpired && name.trim() && isRenter && (
+              <div className="mt-4">
+                <Alert variant="warning">This name has expired. Renew now to prevent it from being reclaimed (1 hour grace period).</Alert>
               </div>
             )}
             {rentedNames.length === 0 && (
@@ -251,12 +257,13 @@ export default function ManagePage() {
                     )}
                     {expiry !== undefined && (
                       <div className="mt-3">
-                        <ExpiryCountdown expiry={expiry} graceLabel="After expiry, name can be reclaimed." />
+                        <ExpiryCountdown expiry={expiry} graceLabel="1 hour grace period before others can reclaim." />
                       </div>
                     )}
                     <div className="mt-4 space-y-2">
                       <LeaseDaysSlider days={days} onChange={setDays} />
                       <p className="text-sm text-zinc-400">Add {days} days = {(Number(renewPrice) / 1e6).toFixed(2)} USDC</p>
+                      <p className="text-xs text-zinc-500">Step 1: Approve USDC · Step 2: Renew</p>
                       {needsApproval ? (
                         <button
                           type="button"
@@ -264,7 +271,7 @@ export default function ManagePage() {
                           disabled={isApprovePending}
                           className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-black hover:bg-amber-400 disabled:opacity-50"
                         >
-                          {isApprovePending ? "Approving…" : "Approve USDC"}
+                          {isApprovePending ? "Approving…" : "1. Approve USDC"}
                         </button>
                       ) : (
                         <button
@@ -273,7 +280,7 @@ export default function ManagePage() {
                           disabled={isRenewPending}
                           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
                         >
-                          {isRenewPending ? "Renewing…" : "Renew"}
+                          {isRenewPending ? "Renewing…" : "2. Renew"}
                         </button>
                       )}
                     </div>

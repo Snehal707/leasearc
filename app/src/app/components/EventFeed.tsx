@@ -105,7 +105,7 @@ export function EventFeed() {
       <p className="mt-0.5 text-xs text-zinc-500">Live contract events</p>
       <ul className="mt-3 max-h-48 space-y-2 overflow-y-auto">
         {events.length === 0 ? (
-          <li className="text-sm text-zinc-400">No recent events.</li>
+          <li className="text-sm text-zinc-400">No recent events. Renewals, record updates, and reclaims will appear here.</li>
         ) : (
           events.map((e, i) => (
             <li key={`${e.txHash}-${i}`} className="flex items-start gap-2 text-sm">
