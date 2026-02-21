@@ -24,7 +24,7 @@ export function TopNav() {
   ];
 
   return (
-    <nav className="relative z-10 flex h-20 items-center justify-between border-b border-white/[0.06] bg-black/30 px-10 backdrop-blur-xl" aria-label="Main">
+    <nav className="sticky top-0 z-50 flex h-20 items-center justify-between border-b border-white/[0.06] bg-black/30 px-10 backdrop-blur-xl" aria-label="Main">
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-4 rounded-xl px-2 py-2 transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent">
           <Logo />
