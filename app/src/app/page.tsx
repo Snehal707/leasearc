@@ -8,30 +8,33 @@ export default function Home() {
     <div className="min-h-screen">
       <TopNav />
       <main className="mx-auto max-w-2xl px-4 py-16 text-center">
-        <h1 className="font-heading text-4xl font-medium tracking-tight text-white text-premium md:text-5xl">
-          LeaseArc – Onchain domain leasing on Arc Testnet
+        <h1 className="font-heading text-4xl font-medium tracking-tight text-white text-premium md:text-5xl max-w-[760px] mx-auto">
+          LeaseArc: Onchain domain leasing on Arc Testnet
         </h1>
-        <p className="mt-5 font-light leading-loose text-slate-200/90 max-w-lg mx-auto">
-          Rent a name for 1–365 days in USDC; renew or it expires and others can reclaim it. ~1¢ per tx · 1 second finality.
+        <p className="mt-5 font-light leading-loose text-slate-200/70 max-w-[640px] mx-auto">
+          Lease any name for 1 to 365 days using USDC. Renew anytime, or let it expire so someone else can claim it.
+        </p>
+        <p className="mt-2 text-sm font-light text-slate-200/70 max-w-[640px] mx-auto">
+          About 1 cent per transaction · About 1 second finality
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             href="/search"
             className="rounded-xl bg-blue-600 px-8 py-3.5 font-medium tracking-wide text-white hover:bg-blue-500 transition-colors"
           >
-            Search a name
+            Search domains
           </Link>
           <Link
             href="/rent"
             className="rounded-xl border border-white/10 px-8 py-3.5 font-medium tracking-wide text-slate-200 hover:bg-white/5 transition-colors"
           >
-            Rent a name
+            Start leasing
           </Link>
           <Link
             href="/resolve"
             className="rounded-xl border border-white/10 px-8 py-3.5 font-medium tracking-wide text-slate-200 hover:bg-white/5 transition-colors"
           >
-            Resolve name → wallet
+            Resolve name to wallet
           </Link>
         </div>
         <div className="mt-12 text-left max-w-xl mx-auto">
