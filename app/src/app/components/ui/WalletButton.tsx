@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { ARC_TESTNET_CHAIN_ID } from "@/lib/contracts/DomainLease";
 import { ARC_DOCS } from "@/lib/arc-docs";
 
 export function WalletButton() {
   const [mounted, setMounted] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const toolsRef = useRef<HTMLDivElement>(null);
   const { address, isConnected, chainId } = useAccount();
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
@@ -15,6 +17,17 @@ export function WalletButton() {
 
   useEffect(() => setMounted(true), []);
 
+  useEffect(() => {
+    if (!toolsOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (toolsRef.current && !toolsRef.current.contains(e.target as Node)) {
+        setToolsOpen(false);
+      }
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [toolsOpen]);
+
   if (!mounted) {
     return (
       <div className="h-10 w-32 animate-pulse rounded-full bg-zinc-800" aria-hidden />
@@ -22,15 +35,21 @@ export function WalletButton() {
   }
 
   const toolsDropdown = (
-    <div className="relative">
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent [&::-webkit-details-marker]:hidden">
-          Tools
-          <svg className="size-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </summary>
-        <div className="absolute right-0 top-full z-50 mt-2 min-w-[200px] rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl">
+    <div className="relative" ref={toolsRef}>
+      <button
+        type="button"
+        onClick={() => setToolsOpen(!toolsOpen)}
+        aria-expanded={toolsOpen}
+        aria-haspopup="true"
+        className="flex cursor-pointer list-none items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent"
+      >
+        Tools
+        <svg className={`size-4 transition-transform ${toolsOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {toolsOpen && (
+        <div className="absolute right-0 top-full z-[100] mt-2 min-w-[200px] rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl">
           <a href={ARC_DOCS.connectToArc} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
             Add Arc Testnet
           </a>
@@ -64,7 +83,7 @@ export function WalletButton() {
             Bridge USDC
           </a>
         </div>
-      </details>
+      )}
     </div>
   );
 

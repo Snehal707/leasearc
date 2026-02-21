@@ -225,18 +225,18 @@ export function LiveEvents() {
 
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-sm p-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-w-0">
+        <div className="min-w-0">
           <p className="label-premium">Live activity</p>
           <p className="mt-0.5 text-xs text-slate-400">Contract events (updates when new events are emitted)</p>
         </div>
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-nowrap overflow-x-auto gap-1 scrollbar-none -mx-1 px-1 shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
                 activeTab === tab.id
                   ? "bg-white/10 text-white"
                   : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
