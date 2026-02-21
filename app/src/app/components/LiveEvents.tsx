@@ -225,13 +225,12 @@ export function LiveEvents() {
 
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-sm p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-w-0">
-        <div className="min-w-0">
-          <p className="label-premium">Live activity</p>
-          <p className="mt-0.5 text-xs text-slate-400">Contract events (updates when new events are emitted)</p>
-        </div>
-        <div className="flex flex-nowrap overflow-x-auto gap-1 scrollbar-none -mx-1 px-1 shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {FILTER_TABS.map((tab) => (
+      <div className="flex flex-col gap-3">
+        {/* Row 1: Title on left, tabs on right */}
+        <div className="flex items-center justify-between gap-4 min-w-0">
+          <p className="label-premium shrink-0 max-w-[200px]">Live activity</p>
+          <div className="flex flex-1 flex-nowrap overflow-x-auto gap-1 min-w-0 -mx-1 px-1 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {FILTER_TABS.map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -244,9 +243,11 @@ export function LiveEvents() {
             >
               {tab.label}
             </button>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+        {/* Row 2: Description full width */}
+        <p className="text-xs text-slate-400 leading-normal">Contract events (updates when new events are emitted)</p>
       <ul className="mt-4 space-y-3 max-h-64 overflow-y-auto">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
