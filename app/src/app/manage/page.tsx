@@ -242,7 +242,11 @@ export default function ManagePage() {
                   <div className="rounded-lg border border-zinc-700 bg-zinc-800/80 p-4 shadow-sm">
                     <h2 className="text-sm font-semibold text-white">Name overview</h2>
                     <p className="mt-1 font-medium text-zinc-200">{name.trim()}</p>
-                    <span className="mt-2 inline-block rounded-full bg-green-500/20 px-2.5 py-0.5 text-xs font-medium text-green-400">Active</span>
+                    {expiry !== undefined && Number(expiry) <= Math.floor(Date.now() / 1000) ? (
+                      <span className="mt-2 inline-block rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-medium text-amber-400">Expired</span>
+                    ) : (
+                      <span className="mt-2 inline-block rounded-full bg-green-500/20 px-2.5 py-0.5 text-xs font-medium text-green-400">Active</span>
+                    )}
                     {expiry !== undefined && (
                       <div className="mt-3">
                         <ExpiryCountdown expiry={expiry} graceLabel="After expiry, name can be reclaimed." />
