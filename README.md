@@ -27,7 +27,7 @@ Rent domain names for 1–365 days in USDC on Arc Testnet. Renew anytime; if you
    ```
    Open http://localhost:3000, connect your wallet, add [Arc Testnet](https://docs.arc.network/arc/references/connect-to-arc) (Chain ID 5042002).
 
-**Production (Vercel):** 1) Set **Root Directory** to `app` 2) Add env var `NEXT_PUBLIC_DOMAIN_LEASE_ADDRESS` 3) Deploy. Must set Root Directory to `app` to fix 404’s environment variables.
+**Production (Vercel):** 1) Set **Root Directory** to `app`. 2) Add env var `NEXT_PUBLIC_DOMAIN_LEASE_ADDRESS`. 3) Deploy. Setting Root Directory to `app` is required to fix 404 errors.
 
 ## Links
 
