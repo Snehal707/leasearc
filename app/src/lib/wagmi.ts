@@ -30,6 +30,7 @@ const okxConnector = injected({
 export const config = createConfig({
   chains: [arcTestnet],
   connectors: [metaMaskConnector, okxConnector, injected()],
+  multiInjectedProviderDiscovery: false,
   transports: {
     [arcTestnet.id]: http(),
   },
