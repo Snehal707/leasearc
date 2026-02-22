@@ -22,3 +22,9 @@ contracts/cache/
 contracts/out/
 contracts/broadcast/
 contracts/lib/
+
+# Debug / logs
+logs/
+*.log
+local-debug*.ts
+recall-agent/debug-*.ts
