@@ -9,9 +9,13 @@ import { ARC_DOCS } from "@/lib/arc-docs";
 export function WalletButton() {
   const [mounted, setMounted] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [walletPickerOpen, setWalletPickerOpen] = useState(false);
   const [panelPosition, setPanelPosition] = useState<{ top: number; right: number } | null>(null);
+  const [walletPanelPosition, setWalletPanelPosition] = useState<{ top: number; right: number } | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const walletTriggerRef = useRef<HTMLButtonElement>(null);
+  const walletPanelRef = useRef<HTMLDivElement>(null);
   const { address, isConnected, chainId } = useAccount();
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
@@ -48,6 +52,35 @@ export function WalletButton() {
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [toolsOpen]);
+
+  useEffect(() => {
+    if (!walletPickerOpen || !walletTriggerRef.current) return;
+    const updatePosition = () => {
+      if (walletTriggerRef.current) {
+        const rect = walletTriggerRef.current.getBoundingClientRect();
+        setWalletPanelPosition({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+      }
+    };
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [walletPickerOpen]);
+
+  useEffect(() => {
+    if (!walletPickerOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const inTrigger = walletTriggerRef.current?.contains(target);
+      const inPanel = walletPanelRef.current?.contains(target);
+      if (!inTrigger && !inPanel) setWalletPickerOpen(false);
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [walletPickerOpen]);
 
   if (!mounted) {
     return (
@@ -145,17 +178,47 @@ export function WalletButton() {
     );
   }
 
+  const walletPickerPanel = walletPanelPosition && (
+    <div
+      ref={walletPanelRef}
+      className="fixed z-[100] min-w-[200px] rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl"
+      style={{ top: walletPanelPosition.top, right: walletPanelPosition.right }}
+    >
+      <p className="px-4 py-1.5 text-[10px] uppercase tracking-wider text-slate-500">Choose wallet</p>
+      {connectors.map((connector) => (
+        <button
+          key={connector.uid}
+          type="button"
+          onClick={() => {
+            connect({ connector });
+            setWalletPickerOpen(false);
+          }}
+          disabled={isPending}
+          className="block w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white disabled:opacity-50"
+        >
+          {connector.name}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex items-center gap-3">
       {toolsDropdown}
-      <button
-        type="button"
-        onClick={() => connect({ connector: connectors[0] })}
-        disabled={isPending}
-        className="rounded-lg bg-gradient-to-b from-[#4A90E2] to-[#2B60D4] px-6 py-2 font-medium text-white shadow-[0_0_15px_rgba(74,144,226,0.6)] hover:from-[#5BA0F2] hover:to-[#3C71E5] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#258cf4] focus:ring-offset-2 focus:ring-offset-[var(--background)] transition-all"
-      >
-        {isPending ? "Connecting…" : "Connect wallet"}
-      </button>
+      <div className="relative">
+        <button
+          ref={walletTriggerRef}
+          type="button"
+          onClick={() => setWalletPickerOpen(!walletPickerOpen)}
+          disabled={isPending}
+          aria-expanded={walletPickerOpen}
+          aria-haspopup="true"
+          className="rounded-lg bg-gradient-to-b from-[#4A90E2] to-[#2B60D4] px-6 py-2 font-medium text-white shadow-[0_0_15px_rgba(74,144,226,0.6)] hover:from-[#5BA0F2] hover:to-[#3C71E5] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#258cf4] focus:ring-offset-2 focus:ring-offset-[var(--background)] transition-all"
+        >
+          {isPending ? "Connecting…" : "Connect wallet"}
+        </button>
+        {walletPickerOpen && typeof document !== "undefined" && createPortal(walletPickerPanel, document.body)}
+      </div>
     </div>
   );
 }

@@ -15,9 +15,21 @@ const arcTestnet = {
   },
 };
 
+const metaMaskConnector = injected({ target: "metaMask" });
+
+const okxConnector = injected({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  target() {
+    if (typeof window === "undefined") return undefined;
+    const okx = (window as { okxwallet?: { ethereum?: unknown } }).okxwallet;
+    const provider = okx?.ethereum ?? okx;
+    return provider ? { id: "okx", name: "OKX Wallet", provider: provider as any } : undefined;
+  },
+});
+
 export const config = createConfig({
   chains: [arcTestnet],
-  connectors: [injected()],
+  connectors: [metaMaskConnector, okxConnector, injected()],
   transports: {
     [arcTestnet.id]: http(),
   },
