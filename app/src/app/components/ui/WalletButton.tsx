@@ -178,27 +178,54 @@ export function WalletButton() {
     );
   }
 
+  const recentConnectorId = typeof window !== "undefined" ? localStorage.getItem("leasearc-recent-wallet") : null;
+
   const walletPickerPanel = walletPanelPosition && (
     <div
       ref={walletPanelRef}
-      className="fixed z-[100] min-w-[200px] rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl"
+      className="fixed z-[100] min-w-[280px] max-h-[320px] overflow-y-auto rounded-xl border border-white/10 bg-[#0f0f1a] py-2 shadow-xl"
       style={{ top: walletPanelPosition.top, right: walletPanelPosition.right }}
     >
-      <p className="px-4 py-1.5 text-[10px] uppercase tracking-wider text-slate-500">Choose wallet</p>
-      {connectors.map((connector) => (
-        <button
-          key={connector.uid}
-          type="button"
-          onClick={() => {
-            connect({ connector });
-            setWalletPickerOpen(false);
-          }}
-          disabled={isPending}
-          className="block w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white disabled:opacity-50"
-        >
-          {connector.name}
-        </button>
-      ))}
+      <p className="px-4 py-2 text-[10px] uppercase tracking-wider text-slate-500">Choose wallet</p>
+      <div className="divide-y divide-white/5">
+        {connectors.map((connector) => {
+          const isRecent = recentConnectorId === connector.uid;
+          const iconUrl = connector.name.includes("MetaMask")
+            ? "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+            : connector.name.includes("OKX")
+              ? "https://www.okx.com/favicon.ico"
+              : null;
+          return (
+            <button
+              key={connector.uid}
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") localStorage.setItem("leasearc-recent-wallet", connector.uid);
+                connect({ connector });
+                setWalletPickerOpen(false);
+              }}
+              disabled={isPending}
+              className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5 disabled:opacity-50"
+            >
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/10">
+                {iconUrl ? (
+                  <img src={iconUrl} alt="" className="h-6 w-6 object-contain" />
+                ) : (
+                  <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+                  </svg>
+                )}
+              </div>
+              <span className="flex-1 text-sm font-medium text-white">{connector.name}</span>
+              {isRecent ? (
+                <span className="rounded-full bg-violet-500/30 px-2.5 py-0.5 text-[10px] font-medium text-violet-300">Recent</span>
+              ) : (
+                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] text-slate-400">Detected</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 
