@@ -177,7 +177,7 @@ export function WalletButton() {
   return (
     <div className="flex items-center gap-3">
       {toolsDropdown}
-      <ConnectButton />
+      <ConnectButton showBalance={false} />
     </div>
   );
 }
