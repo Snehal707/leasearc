@@ -1,7 +1,7 @@
 "use client";
 
-import { http, createConfig } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import type { Chain } from "@rainbow-me/rainbowkit";
 
 const arcTestnet = {
   id: 5042002,
@@ -13,27 +13,15 @@ const arcTestnet = {
   blockExplorers: {
     default: { name: "ArcScan", url: "https://testnet.arcscan.app" },
   },
-};
+} as const satisfies Chain;
 
-const metaMaskConnector = injected({ target: "metaMask" });
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
 
-const okxConnector = injected({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  target() {
-    if (typeof window === "undefined") return undefined;
-    const okx = (window as { okxwallet?: { ethereum?: unknown } }).okxwallet;
-    const provider = okx?.ethereum ?? okx;
-    return provider ? { id: "okx", name: "OKX Wallet", provider: provider as any } : undefined;
-  },
-});
-
-export const config = createConfig({
+export const config = getDefaultConfig({
+  appName: "LeaseArc",
+  projectId,
   chains: [arcTestnet],
-  connectors: [metaMaskConnector, okxConnector, injected()],
-  multiInjectedProviderDiscovery: false,
-  transports: {
-    [arcTestnet.id]: http(),
-  },
+  ssr: true,
 });
 
 declare module "wagmi" {
