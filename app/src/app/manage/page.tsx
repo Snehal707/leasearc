@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, usePublicClient, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { TopNav } from "../components/TopNav";
 import { ExpiryCountdown } from "../components/ui/ExpiryCountdown";
 import { RecordsForm } from "../components/ui/RecordsForm";
@@ -125,7 +125,7 @@ export default function ManagePage() {
     functionName: "pricePerDay",
   });
   const renewPrice = pricePerDay !== undefined ? pricePerDay * BigInt(days) : BigInt(0);
-  const { data: allowance } = useReadContract({
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: USDC_ADDRESS,
     abi: USDC_ABI,
     functionName: "allowance",
@@ -135,9 +135,16 @@ export default function ManagePage() {
 
   const isRenter = address && renter && address.toLowerCase() === String(renter).toLowerCase();
 
-  const { writeContract: writeApprove, isPending: isApprovePending } = useWriteContract();
+  const { writeContract: writeApprove, isPending: isApprovePending, data: approveHash } = useWriteContract();
   const { writeContract: writeRenew, isPending: isRenewPending } = useWriteContract();
   const { writeContract: writeSetRecords, isPending: isSetRecordsPending } = useWriteContract();
+
+  const { isSuccess: isApproveConfirmed } = useWaitForTransactionReceipt({ hash: approveHash });
+  useEffect(() => {
+    if (isApproveConfirmed && approveHash) {
+      refetchAllowance();
+    }
+  }, [isApproveConfirmed, approveHash, refetchAllowance]);
 
   const handleApprove = useCallback(() => {
     writeApprove({
