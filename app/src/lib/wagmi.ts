@@ -15,7 +15,10 @@ const arcTestnet = {
   },
 } as const satisfies Chain;
 
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
+// WalletConnect projectId (public); set in Vercel env or .env.local to override
+const projectId =
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ||
+  "b2c9f33b354a862b2935f0a1db30cce1";
 
 export const config = getDefaultConfig({
   appName: "LeaseArc",
